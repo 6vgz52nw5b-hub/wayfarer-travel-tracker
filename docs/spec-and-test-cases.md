@@ -31,6 +31,7 @@ A free, offline-first PWA for tracking countries/territories, cities, and airpor
 ### Visual map
 - Read-only SVG world map, auto-shaded from the Countries checklist — not tappable itself
 - **Country-status only**: marking a city or airport never changes the map, even if the underlying place isn't shaded yet. (City pins on the map were considered and ruled out — custom-added cities won't reliably have coordinates unless entry is forced to be more complex, which fights the simplicity goal.)
+- **Search-to-mark from Map view**: while viewing the globe, typing in the search bar shows a small matching-countries dropdown right over the map; tapping a result toggles it and the globe updates instantly without leaving Map view — added so marking and seeing the visual payoff can happen in the same screen, not just from List view.
 
 ### Data & backup
 - Everything stored locally in the browser (localStorage/IndexedDB) — fully offline, no account, no server

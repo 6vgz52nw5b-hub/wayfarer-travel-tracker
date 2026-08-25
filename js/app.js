@@ -40,6 +40,7 @@ function cacheEls() {
   els.airportFilters = document.getElementById('airport-filters');
   els.countriesList = document.getElementById('countries-list');
   els.countriesMap = document.getElementById('countries-map');
+  els.countriesMapResults = document.getElementById('countries-map-results');
   els.citiesList = document.getElementById('cities-list');
   els.airportsList = document.getElementById('airports-list');
   els.tabbar = document.querySelector('.tabbar');
@@ -89,6 +90,7 @@ function bindEvents() {
   });
 
   els.countriesList.addEventListener('click', onCountryRowClick);
+  els.countriesMapResults.addEventListener('click', onCountryRowClick);
   els.citiesList.addEventListener('click', onCityListClick);
   els.airportsList.addEventListener('click', onAirportListClick);
 
@@ -163,13 +165,16 @@ function renderCountriesPanel() {
   els.countriesList.hidden = showMap;
   els.countriesMap.hidden = !showMap;
 
+  const term = searchTerm;
+  const filtered = term ? DATA.countries.filter((c) => c.name.toLowerCase().includes(term)) : DATA.countries;
+
   if (showMap) {
     renderMap(els.countriesMap, { countries: DATA.countries, store });
+    renderMapSearchResults(term, filtered);
     return;
   }
 
-  const term = searchTerm;
-  const filtered = term ? DATA.countries.filter((c) => c.name.toLowerCase().includes(term)) : DATA.countries;
+  els.countriesMapResults.hidden = true;
 
   const byContinent = new Map();
   for (const c of filtered) {
@@ -203,6 +208,33 @@ function renderCountriesPanel() {
     }
   }
   els.countriesList.innerHTML = html;
+}
+
+function renderMapSearchResults(term, filtered) {
+  if (!term) {
+    els.countriesMapResults.hidden = true;
+    els.countriesMapResults.innerHTML = '';
+    return;
+  }
+  els.countriesMapResults.hidden = false;
+  if (!filtered.length) {
+    els.countriesMapResults.innerHTML = `<div class="empty-state">No countries match “${escapeHtml(term)}”.</div>`;
+    return;
+  }
+  const list = filtered.slice().sort((a, b) => a.name.localeCompare(b.name));
+  let html = '';
+  for (const c of list) {
+    const visited = store.isCountryMarked(c.id);
+    const iconHtml = c.hasFlagEmoji
+      ? `<span class="flag">${c.flagEmoji || ''}</span>`
+      : '<span class="fallback-icon">\u{1F310}</span>';
+    html += `<button type="button" class="row${visited ? ' visited' : ''}" data-country-id="${escapeHtml(c.id)}">
+      <span class="checkbox">${visited ? '✓' : ''}</span>
+      ${iconHtml}
+      <span class="row-label">${escapeHtml(c.name)}</span>
+    </button>`;
+  }
+  els.countriesMapResults.innerHTML = html;
 }
 
 function onCountryRowClick(e) {
