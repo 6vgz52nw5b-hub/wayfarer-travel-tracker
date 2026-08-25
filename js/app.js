@@ -51,14 +51,17 @@ function cacheEls() {
   els.cityToastMark = document.getElementById('city-country-mark');
 }
 
+const G7_IDS = ['US', 'CA', 'GB', 'FR', 'DE', 'IT', 'JP'];
+
 function populateCountrySelects() {
-  const options = DATA.countries
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((c) => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`)
-    .join('');
-  document.getElementById('add-city-country').innerHTML = options;
-  document.getElementById('add-airport-country').innerHTML = options;
+  const sorted = DATA.countries.slice().sort((a, b) => a.name.localeCompare(b.name));
+  const g7 = G7_IDS.map((id) => DATA.countryById.get(id)).filter(Boolean);
+  const opt = (c) => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`;
+  const html =
+    `<optgroup label="Common">${g7.map(opt).join('')}</optgroup>` +
+    `<optgroup label="All countries">${sorted.map(opt).join('')}</optgroup>`;
+  document.getElementById('add-city-country').innerHTML = html;
+  document.getElementById('add-airport-country').innerHTML = html;
 }
 
 function bindEvents() {
@@ -290,8 +293,8 @@ function renderCitiesPanel() {
     }
   }
 
-  if (term && !filtered.length) {
-    html += `<div class="empty-state">No matches found.</div>`;
+  if (term) {
+    if (!filtered.length) html += `<div class="empty-state">No matches found.</div>`;
     html += `<button type="button" class="add-custom-row" id="add-custom-city-trigger">+ Add “${escapeHtml(searchTerm)}” as a new city</button>`;
   } else if (!countryIds.length) {
     html = '<div class="empty-state">No cities yet. Search to find one, or add your own.</div>';
@@ -413,8 +416,8 @@ function renderAirportsPanel() {
     }
   }
 
-  if (term && !list.length) {
-    html += `<div class="empty-state">No matches found.</div>`;
+  if (term) {
+    if (!list.length) html += `<div class="empty-state">No matches found.</div>`;
     html += `<button type="button" class="add-custom-row" id="add-custom-airport-trigger">+ Add “${escapeHtml(searchTerm)}” as a new airport</button>`;
   } else if (!countryIds.length) {
     html = '<div class="empty-state">No airports yet. Search to find one, or add your own.</div>';

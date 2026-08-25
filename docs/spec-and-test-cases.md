@@ -50,6 +50,10 @@ These weren't explicitly nailed down in planning and default to the simplest sen
 - **City→country prompt frequency**: assumed to fire only on the unmarked→marked transition for a given city, not on every app load. Dismissing it doesn't ask again unless that city is unmarked and re-marked.
 - **Import backup behavior**: assumed to be a full overwrite of current local data, not a merge. Since export/import is only expected to be used for device migration (not regular two-way sync), overwrite should be safe, but worth confirming before build.
 
+### Country pickers (Add City / Add Airport modals)
+- The country `<select>` in both "Add custom" modals is grouped into a "Common" group (US, Canada, UK, France, Germany, Italy, Japan — the G7, US first) followed by "All countries" alphabetically, so the most-likely picks don't require scrolling through the full list.
+- [x] "Common" optgroup lists exactly the G7 with the US first; "All countries" optgroup lists the full alphabetical list starting with United States (name sort, not a duplicate-removal step)
+
 ## Test Cases
 
 All items below were run against the real app in headless Chromium (Playwright), not just reasoned about from the code — see the note at the end for the handful that genuinely can't be automated this way.
@@ -69,6 +73,7 @@ All items below were run against the real app in headless Chromium (Playwright),
 - [x] Tap to mark/unmark works identically to countries (instant, no dialog) — including unmark, which earlier passes had skipped
 - [x] Searching a preset city surfaces it and allows toggling
 - [x] Searching a city not on the preset list shows "No matches found" + "Add '[term]' as a new city" — **this was actually broken** (only the add-button rendered, no "No matches found" text) until this test pass caught it; fixed in `js/app.js` and re-verified
+- [x] "Add '[term]' as a new city" appears at the bottom of the list as soon as there's a search term, even when there are partial matches above it — no longer requires typing until zero results show
 - [x] Adding a custom city requires picking its country, then it appears filed under that country's group, pre-marked
 - [x] Marking a previously-unmarked city, whose country is not yet marked, triggers the "Mark [Country] too?" prompt
 - [x] Accepting the prompt marks the country and updates country counters + map shading
@@ -87,6 +92,7 @@ All items below were run against the real app in headless Chromium (Playwright),
 - [x] Marking an airport never prompts about, or changes, the state of its city or country
 - [x] Marking an airport never changes the world map
 - [x] Adding a custom airport (code optional, name/city/country/type required) files it under the right country and is immediately searchable/toggleable
+- [x] "Add '[term]' as a new airport" appears at the bottom of the list as soon as there's a search term, even when there are partial matches above it
 - [x] An airport with only an ICAO code (common for military bases) displays and searches correctly with no IATA code present — verified against a real example (Abu Dhabi Northeast Airport - Suweihan Air Base, ICAO `OMAW`, no IATA)
 - [x] Custom (self-added) airports show a delete (✕) button next to their row; preset airports never show one
 - [x] Tapping delete asks for confirmation; canceling leaves the airport untouched, confirming removes it entirely (from the list and from marked state) with no page errors
