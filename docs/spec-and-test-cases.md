@@ -101,6 +101,6 @@ Note: the map shipped as a touch-rotatable globe (real per-country borders via D
 
 ### Platform / install
 These three can't be driven by a headless browser — they require an actual iPad/iPhone in Safari, so they're still open:
-- [ ] Opening the hosted URL in Safari loads correctly on first visit (requires internet once) — blocked on GitHub Pages deployment, not yet done
+- [x] Opening the hosted URL in Safari loads correctly on first visit (requires internet once) — verified live at https://6vgz52nw5b-hub.github.io/wayfarer-travel-tracker/ (headless Chromium check: all 252 country rows render, zero console/network errors); still worth a quick real-Safari glance, but the deployment itself is confirmed working
 - [ ] "Add to Home Screen" creates a working icon that launches the app in standalone mode (no Safari address bar/chrome) — needs a real device
 - [ ] With the app already installed, enabling airplane mode and launching from the home-screen icon still opens and works fully — the underlying mechanism (service worker cache) is verified via headless offline tests, but the literal installed-icon + airplane-mode flow needs a real-device check
