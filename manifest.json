@@ -1,0 +1,16 @@
+{
+  "name": "Wayfarer",
+  "short_name": "Wayfarer",
+  "description": "Track the countries, cities, and airports you've visited.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef2ed",
+  "theme_color": "#1f6f63",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

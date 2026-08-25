@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#1f6f63">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wayfarer">
+<title>Wayfarer</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <div class="title-row">
+      <span class="app-title" id="panel-title">Countries</span>
+      <span class="counter" id="panel-counter">— / —</span>
+    </div>
+    <div class="search-row">
+      <input class="search-input" id="search-input" type="text" placeholder="Search countries…" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div id="countries-controls" class="segmented" role="tablist" aria-label="Countries view">
+      <button type="button" data-view="list" class="active">List</button>
+      <button type="button" data-view="map">Map</button>
+    </div>
+    <div id="airport-filters" class="filterchips" hidden>
+      <button type="button" data-filter="all" class="active">All</button>
+      <button type="button" data-filter="commercial">Commercial</button>
+      <button type="button" data-filter="military">Military</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <section class="panel active" id="panel-countries">
+      <div id="countries-list"></div>
+      <div class="map-wrap" id="countries-map" hidden></div>
+    </section>
+
+    <section class="panel" id="panel-cities">
+      <div id="cities-list"></div>
+      <div class="toast" id="city-country-toast" hidden>
+        <p id="city-country-toast-text"></p>
+        <div class="actions">
+          <button type="button" id="city-country-dismiss">Dismiss</button>
+          <button type="button" class="primary" id="city-country-mark">Mark</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-airports">
+      <div id="airports-list"></div>
+    </section>
+
+    <section class="panel" id="panel-backup">
+      <div class="backup-panel">
+        <div>
+          <div class="eyebrow">Data &amp; backup</div>
+          <p style="margin:6px 0 0;color:var(--ink-muted);font-size:13.5px;line-height:1.5;">
+            Everything you mark is stored only on this device. If you get a new iPad or iPhone, export a backup here first, then import it on the new device.
+          </p>
+        </div>
+        <div class="backup-card">
+          <h3>Export backup</h3>
+          <p>Saves a file with everything you've marked, including anything you've added yourself.</p>
+          <button type="button" class="btn primary" id="export-btn">Export backup</button>
+        </div>
+        <div class="backup-card">
+          <h3>Import backup</h3>
+          <p>Loads a previously exported file. This replaces everything currently on this device.</p>
+          <input type="file" id="import-file-input" accept="application/json" hidden>
+          <button type="button" class="btn" id="import-btn">Choose backup file…</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <button type="button" data-tab="countries" class="active"><span class="icon">🌐</span>Countries</button>
+    <button type="button" data-tab="cities"><span class="icon">🏙️</span>Cities</button>
+    <button type="button" data-tab="airports"><span class="icon">🛫</span>Airports</button>
+    <button type="button" data-tab="backup"><span class="icon">💾</span>Backup</button>
+  </nav>
+
+  <!-- Add custom city -->
+  <div class="modal-overlay" id="modal-add-city" hidden>
+    <div class="modal-card">
+      <h2>Add a city</h2>
+      <div class="field">
+        <label for="add-city-name">City name</label>
+        <input type="text" id="add-city-name" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="add-city-country">Country</label>
+        <select id="add-city-country"></select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" data-close="modal-add-city">Cancel</button>
+        <button type="button" class="btn primary" id="add-city-save">Add &amp; mark visited</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add custom airport -->
+  <div class="modal-overlay" id="modal-add-airport" hidden>
+    <div class="modal-card">
+      <h2>Add an airport</h2>
+      <div class="field">
+        <label for="add-airport-code">Code (IATA or ICAO)</label>
+        <input type="text" id="add-airport-code" autocomplete="off" placeholder="Optional if unknown">
+      </div>
+      <div class="field">
+        <label for="add-airport-name">Airport name</label>
+        <input type="text" id="add-airport-name" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="add-airport-city">City</label>
+        <input type="text" id="add-airport-city" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="add-airport-country">Country</label>
+        <select id="add-airport-country"></select>
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <div class="radio-row">
+          <label><input type="radio" name="add-airport-type" value="commercial" checked><span>Commercial</span></label>
+          <label><input type="radio" name="add-airport-type" value="military"><span>Military</span></label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" data-close="modal-add-airport">Cancel</button>
+        <button type="button" class="btn primary" id="add-airport-save">Add &amp; mark visited</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
