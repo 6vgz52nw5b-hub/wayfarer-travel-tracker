@@ -235,6 +235,20 @@ button, input, select {
 
 .row.visited { background: var(--accent-soft); }
 
+.row-wrap { display: flex; align-items: stretch; }
+.row-wrap .row { flex: 1; min-width: 0; width: auto; }
+.row-delete {
+  flex-shrink: 0;
+  width: 42px;
+  border: none;
+  border-bottom: 1px solid var(--surface-sunken);
+  background: var(--surface);
+  color: var(--ink-faint);
+  font-size: 15px;
+  cursor: pointer;
+}
+.row-delete:hover, .row-delete:active { background: var(--danger); color: #fff; }
+
 .checkbox {
   width: 21px;
   height: 21px;

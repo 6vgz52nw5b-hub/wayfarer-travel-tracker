@@ -75,6 +75,8 @@ All items below were run against the real app in headless Chromium (Playwright),
 - [x] Dismissing the prompt leaves the country unmarked and doesn't affect the city's own marked state
 - [x] Marking a city whose country is *already* marked does not show the prompt
 - [x] Marking/unmarking a city never changes the world map on its own
+- [x] Custom (self-added) cities show a delete (✕) button next to their row; preset cities never show one — verified a preset row (Paris) has zero delete buttons while a custom row has exactly one
+- [x] Tapping delete asks for confirmation; canceling leaves the city untouched, confirming removes it entirely (from the list and from marked state) with no page errors
 
 ### Airports
 - [x] List loads grouped by country; each row shows code (IATA, or ICAO fallback), name, and city
@@ -86,6 +88,8 @@ All items below were run against the real app in headless Chromium (Playwright),
 - [x] Marking an airport never changes the world map
 - [x] Adding a custom airport (code optional, name/city/country/type required) files it under the right country and is immediately searchable/toggleable
 - [x] An airport with only an ICAO code (common for military bases) displays and searches correctly with no IATA code present — verified against a real example (Abu Dhabi Northeast Airport - Suweihan Air Base, ICAO `OMAW`, no IATA)
+- [x] Custom (self-added) airports show a delete (✕) button next to their row; preset airports never show one
+- [x] Tapping delete asks for confirmation; canceling leaves the airport untouched, confirming removes it entirely (from the list and from marked state) with no page errors
 
 ### Visual map
 Note: the map shipped as a touch-rotatable globe (real per-country borders via D3 + world-atlas topojson), not the flat SVG map originally spec'd here — same rules apply, just rendered differently.

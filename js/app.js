@@ -279,11 +279,14 @@ function renderCitiesPanel() {
     html += `<div class="group-head"><span class="flag">${flag}</span>${escapeHtml(name)}<span class="count">${list.length}</span></div>`;
     for (const c of list) {
       const visited = store.isCityMarked(c.id);
-      html += `<button type="button" class="row${visited ? ' visited' : ''}" data-city-id="${escapeHtml(c.id)}" data-country-id="${escapeHtml(countryId)}">
-        <span class="checkbox">${visited ? '✓' : ''}</span>
-        <span class="row-label">${escapeHtml(c.name)}</span>
-        ${c.custom ? '<span class="tag">custom</span>' : ''}
-      </button>`;
+      html += `<div class="row-wrap">
+        <button type="button" class="row${visited ? ' visited' : ''}" data-city-id="${escapeHtml(c.id)}" data-country-id="${escapeHtml(countryId)}">
+          <span class="checkbox">${visited ? '✓' : ''}</span>
+          <span class="row-label">${escapeHtml(c.name)}</span>
+          ${c.custom ? '<span class="tag">custom</span>' : ''}
+        </button>
+        ${c.custom ? `<button type="button" class="row-delete" data-delete-city-id="${escapeHtml(c.id)}" aria-label="Delete ${escapeHtml(c.name)}">✕</button>` : ''}
+      </div>`;
     }
   }
 
@@ -298,6 +301,17 @@ function renderCitiesPanel() {
 }
 
 function onCityListClick(e) {
+  const delBtn = e.target.closest('[data-delete-city-id]');
+  if (delBtn) {
+    const cityId = delBtn.dataset.deleteCityId;
+    const city = store.customCities.find((c) => c.id === cityId);
+    const name = city ? city.name : 'this city';
+    if (window.confirm(`Delete "${name}"? This can't be undone.`)) {
+      store.removeCustomCity(cityId);
+      renderCitiesPanel();
+    }
+    return;
+  }
   const addBtn = e.target.closest('#add-custom-city-trigger');
   if (addBtn) {
     document.getElementById('add-city-name').value = els.searchInput.value.trim();
@@ -386,13 +400,16 @@ function renderAirportsPanel() {
     for (const a of rows) {
       const visited = store.isAirportMarked(a.id);
       const code = a.iata || a.icao || '—';
-      html += `<button type="button" class="row${visited ? ' visited' : ''}" data-airport-id="${escapeHtml(a.id)}">
-        <span class="checkbox">${visited ? '✓' : ''}</span>
-        <span class="code">${escapeHtml(code)}</span>
-        <span class="row-label">${escapeHtml(a.name)}${a.city ? `<span class="row-sub">${escapeHtml(a.city)}</span>` : ''}</span>
-        ${a.military ? '<span class="tag">military</span>' : ''}
-        ${a.custom ? '<span class="tag">custom</span>' : ''}
-      </button>`;
+      html += `<div class="row-wrap">
+        <button type="button" class="row${visited ? ' visited' : ''}" data-airport-id="${escapeHtml(a.id)}">
+          <span class="checkbox">${visited ? '✓' : ''}</span>
+          <span class="code">${escapeHtml(code)}</span>
+          <span class="row-label">${escapeHtml(a.name)}${a.city ? `<span class="row-sub">${escapeHtml(a.city)}</span>` : ''}</span>
+          ${a.military ? '<span class="tag">military</span>' : ''}
+          ${a.custom ? '<span class="tag">custom</span>' : ''}
+        </button>
+        ${a.custom ? `<button type="button" class="row-delete" data-delete-airport-id="${escapeHtml(a.id)}" aria-label="Delete ${escapeHtml(a.name)}">✕</button>` : ''}
+      </div>`;
     }
   }
 
@@ -407,6 +424,17 @@ function renderAirportsPanel() {
 }
 
 function onAirportListClick(e) {
+  const delBtn = e.target.closest('[data-delete-airport-id]');
+  if (delBtn) {
+    const airportId = delBtn.dataset.deleteAirportId;
+    const airport = store.customAirports.find((a) => a.id === airportId);
+    const name = airport ? airport.name : 'this airport';
+    if (window.confirm(`Delete "${name}"? This can't be undone.`)) {
+      store.removeCustomAirport(airportId);
+      renderAirportsPanel();
+    }
+    return;
+  }
   const addBtn = e.target.closest('#add-custom-airport-trigger');
   if (addBtn) {
     document.getElementById('add-airport-name').value = els.searchInput.value.trim();

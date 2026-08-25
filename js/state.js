@@ -84,6 +84,18 @@ class Store {
     this._persist();
   }
 
+  removeCustomCity(id) {
+    this.customCities = this.customCities.filter((c) => c.id !== id);
+    this.markedCities.delete(id);
+    this._persist();
+  }
+
+  removeCustomAirport(id) {
+    this.customAirports = this.customAirports.filter((a) => a.id !== id);
+    this.markedAirports.delete(id);
+    this._persist();
+  }
+
   exportBackup() {
     return {
       app: 'wayfarer',
